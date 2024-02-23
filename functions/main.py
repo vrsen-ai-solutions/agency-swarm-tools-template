@@ -7,7 +7,7 @@ from firebase_functions import https_fn
 from google.analytics.data_v1beta import BetaAnalyticsDataClient, OrderBy
 from google.analytics.data_v1beta.types import DateRange, Dimension, Metric
 
-from schema import GA4QueryParams
+from tools import GA4QueryParams
 from schema_example import Add2Numbers
 
 initialize_app()

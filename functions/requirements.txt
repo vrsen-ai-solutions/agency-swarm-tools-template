@@ -1,3 +1,2 @@
 firebase_functions~=0.1.0
-instructor
-google-analytics-data
+git+https://github.com/VRSEN/agency-swarm.git@dev/base-tool-schema
