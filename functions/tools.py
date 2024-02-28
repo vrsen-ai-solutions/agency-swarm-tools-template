@@ -6,7 +6,6 @@ class MyCustomTool(BaseTool):
     A brief description of what the custom tool does.
     The docstring should clearly explain the tool's purpose and functionality.
     """
-
     # Define the fields with descriptions using Pydantic Field
     example_field: str = Field(
         ..., description="Description of the example field, explaining its purpose and usage."
@@ -37,4 +36,5 @@ if __name__ == "__main__":
     result = my_tool.run()
     print(result)
 
-    print(json.dumps(my_tool.openapi_schema('123'), indent=2))
+    print(ToolFactory.get_openapi_schema([WhoisCheckerTool], 'https://whois-checker-sfh7css2qa-uc.a.run.app'))
+
