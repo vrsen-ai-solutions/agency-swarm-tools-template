@@ -22,7 +22,7 @@ class MyCustomTool(BaseTool):
         """
 
         # Your custom tool logic goes here
-        do_something(self.example_field)
+        # do_something(self.example_field)
 
         # Return the result of the tool's operation
         return "Result of MyCustomTool operation"
@@ -32,9 +32,6 @@ if __name__ == "__main__":
     # Create an instance of the custom tool
     my_tool = MyCustomTool(example_field="example_value")
 
-    # Run the tool
+    # Test the tool
     result = my_tool.run()
     print(result)
-
-    print(ToolFactory.get_openapi_schema([WhoisCheckerTool], 'https://whois-checker-sfh7css2qa-uc.a.run.app'))
-

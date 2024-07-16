@@ -1,30 +1,49 @@
-# Welcome to Cloud Functions for Firebase for Python!
-# To get started, simply uncomment the below code or create your own.
-# Deploy with `firebase deploy`
-
-from firebase_admin import initialize_app
 from firebase_functions import https_fn
-
-from tools import MyCustomTool
+from firebase_admin import initialize_app
+from flask import Flask, request, jsonify
+from helpers import parse_all_tools
+from tools.MyCustomTool import MyCustomTool
 
 initialize_app()
 
-db_token = ""
+app = Flask(__name__)
 
+db_token = "a1b2c3d4e5f6g7h8i9j0"
 
-@https_fn.on_request()
-def my_custom_tool(req: https_fn.Request):
-    token = req.headers.get("Authorization").split("Bearer ")[1]
+def create_endpoint(route, tool_class):
+    @app.route(route, methods=['POST'])
+    def endpoint():
+        print(f"Endpoint {route} called")  # Debug print
+        token = request.headers.get("Authorization").split("Bearer ")[1]
+        if token != db_token:
+            return jsonify({"message": "Unauthorized"}), 401
+
+        try:
+            tool = tool_class(**request.get_json())
+            return jsonify({"response": tool.run()})
+        except Exception as e:
+            return jsonify({"Error": str(e)})
+        
+# create endpoints for each file in ./tools
+tools = parse_all_tools()
+print(f"Tools found: {tools}")  # Debug print
+
+for tool in tools:
+    route = f"/{tool.__name__}"
+    print(f"Creating endpoint for {route}")  # Debug print
+    create_endpoint(route, tool)
+
+@https_fn.on_request(max_instances=1)
+def tools_handler(req: https_fn.Request) -> https_fn.Response:
+    print("tools_handler called")  # Debug print
+    print(req.headers)  # Debug print
+    try:
+        token = req.headers.get("Authorization").split("Bearer ")[1]
+    except Exception:
+        return https_fn.Response("Unauthorized", status=401)
+        
     if token != db_token:
         return https_fn.Response("Unauthorized", status=401)
 
-    try:
-        tool = MyCustomTool(**req.get_json())
-
-        return {
-            "response": tool.run(),
-        }
-    except Exception as e:
-        return {
-            "Error": str(e)
-        }
+    with app.request_context(req.environ):
+        return app.full_dispatch_request()
