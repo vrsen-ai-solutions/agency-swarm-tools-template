@@ -1,0 +1,48 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: "latest"
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CLOUD_PROD_CREDENTIALS }}
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Create venv for `functions`
+        working-directory: ./functions
+        run: |
+          python3.12 -m venv venv
+
+      - name: Install `functions` modules
+        working-directory: ./functions
+        run: |
+          source venv/bin/activate && pip install -r requirements.txt
+
+      - name: Deploy firebase functions
+        working-directory: ./functions
+        run: |
+          source venv/bin/activate
+          firebase deploy --only functions --force
