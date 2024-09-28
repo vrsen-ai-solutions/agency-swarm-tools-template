@@ -45,4 +45,5 @@ jobs:
         working-directory: ./functions
         run: |
           source venv/bin/activate
+          firebase use default
           firebase deploy --only functions --force
