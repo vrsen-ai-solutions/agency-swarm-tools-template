@@ -2,16 +2,15 @@ from firebase_functions import https_fn
 from firebase_admin import initialize_app
 from flask import Flask, request, jsonify
 from helpers import parse_all_tools
-from tools.MyCustomTool import MyCustomTool
 
 initialize_app()
 
 app = Flask(__name__)
 
-db_token = "a1b2c3d4e5f6g7h8i9j0"
+db_token = ""
 
 def create_endpoint(route, tool_class):
-    @app.route(route, methods=['POST'])
+    @app.route(route, methods=['POST'], endpoint=tool_class.__name__)
     def endpoint():
         print(f"Endpoint {route} called")  # Debug print
         token = request.headers.get("Authorization").split("Bearer ")[1]
@@ -23,7 +22,7 @@ def create_endpoint(route, tool_class):
             return jsonify({"response": tool.run()})
         except Exception as e:
             return jsonify({"Error": str(e)})
-        
+
 # create endpoints for each file in ./tools
 tools = parse_all_tools()
 print(f"Tools found: {tools}")  # Debug print
