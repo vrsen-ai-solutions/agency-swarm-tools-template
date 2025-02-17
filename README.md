@@ -6,8 +6,7 @@ With custom coded tools, you can query external data sources in real time. You c
 
 ## Step-by-Step
 
-1. **Clone this repo**  
-   [https://github.com/vrsen-ai-solutions/agency-swarm-tools-template](https://github.com/vrsen-ai-solutions/agency-swarm-tools-template)
+1. **Click use this template**
 
 2. **Create a project on Firebase.**
 
